@@ -20,7 +20,7 @@ int main() {
     }
 
     server_addr.sin_family = AF_INET;  //Stores Socket address
-    server_addr.sin_addr.s_addr = INADDR_ANY;  //Stores IP address
+    server_addr.sin_addr.s_addr = INADDR_ANY;  //Stores IP address  server_addr.sin_addr.s_addr = inet(" ")
     server_addr.sin_port = htons(PORT);  //Stores Port Number
 
     if (bind(server_socket, (struct sockaddr *)&server_addr, sizeof(server_addr)) < 0) {
@@ -42,14 +42,24 @@ int main() {
     }
 
     // Receive data from client and send response
-    recv(client_socket, buffer, BUFFER_SIZE, 0);
-    printf("Received message from client: %s\n", buffer);
-    send(client_socket, buffer, strlen(buffer), 0);
-    printf("Message sent to client\n");
-
+    while (1){
+	    recv(client_socket, buffer, BUFFER_SIZE, 0);
+	    printf("From client: %s\n", buffer);
+	    bzero(buffer, sizeof(buffer));
+	    int n = 0;
+	    printf("Enter message for client: ");
+	    while ((buffer[n++] = getchar()) != '\n') 
+            ; 
+   	    send(client_socket, buffer, strlen(buffer), 0);
+   	    printf("Waiting for Client..\n");
+	     if (strncmp("exit",buffer,4) == 0) {
+		    printf("Server Exits");
+		    break;
+		}
+	    
+    }
     close(client_socket);
     close(server_socket);
 
     return 0;
 }
-
