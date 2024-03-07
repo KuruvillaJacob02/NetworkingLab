@@ -17,7 +17,6 @@ int main() {
         perror("Socket creation failed");
         exit(EXIT_FAILURE);
     }
-    
     server_addr.sin_family = AF_INET;
     server_addr.sin_port = htons(PORT);
     if (inet_pton(AF_INET, "127.0.0.1", &server_addr.sin_addr) <= 0) {
@@ -29,17 +28,23 @@ int main() {
         perror("Connection failed");
         exit(EXIT_FAILURE);
     }
-    
-    printf("Enter message for server: ");
-    fgets(buffer, BUFFER_SIZE, stdin);
-    send(client_socket, buffer, strlen(buffer), 0);
-    printf("Message sent to server\n");
-
-    recv(client_socket, buffer, BUFFER_SIZE, 0);
-    printf("Server response: %s\n", buffer);
-    
+ 
+    while (1){
+    	    int n =0;
+	    printf("Enter message for server: ");
+	    while ((buffer[n++] = getchar()) != '\n')
+	    	;
+	    send(client_socket, buffer, strlen(buffer), 0);
+	    printf("Waiting for Server..\n");
+	    bzero(buffer,sizeof(buffer));
+	    recv(client_socket, buffer, BUFFER_SIZE, 0);
+	    printf("From Server : %s", buffer);
+	    if (strncmp("exit", buffer,4) == 0) {
+	    	    printf("Client Exit");
+		    break;
+	    }
+    }
     close(client_socket);
 
     return 0;
 }
-
