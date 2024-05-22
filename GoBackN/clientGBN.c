@@ -3,7 +3,7 @@
 #include<unistd.h>
 #include<arpa/inet.h>
 #include<string.h>
-#include<sys/time.h>
+#include<sys/time.h>    
 #include <errno.h>
 
 #define TIMEOUT_SEC 2
@@ -22,7 +22,7 @@ void main(){
     char buffer[BUFFER_SIZE];
     int sockID = socket(AF_INET, SOCK_STREAM, 0);
     
-    if (sockID == 1){
+    if (sockID == -1){
         perror("Socket creation failed");
         exit(1);
     }
@@ -41,7 +41,8 @@ void main(){
     else
         printf("Connected to the server..\n");
     
-    while (base <= MAX_FRAMES){
+    while (base <= MAX_FRAMES){  
+    
         for (int i = current_frame ; i < base + WINDOW_SIZE && i <= MAX_FRAMES; i++){  //Sending frames to Server
             sprintf(buffer,"SEQ%d",i);
             printf("Sending frame : %s\n",buffer);
@@ -51,19 +52,20 @@ void main(){
         
         //Set Time out
         struct timeval timeout;
-        timeout.tv_sec = TIMEOUT_SEC;  //Seconds
-        timeout.tv_usec = 0; //Microseconds
+        timeout.tv_sec = TIMEOUT_SEC;  //Seconds 
+        timeout.tv_usec = 0; //Microseconds 
         
         
         if (setsockopt(sockID, SOL_SOCKET, SO_RCVTIMEO, (char*)&timeout, sizeof(timeout)) < 0){
-            perror("Setting Timeout failed");
+            perror("Setting Timeout failed"); 
             exit(1);
         }
         
-        memset(buffer,0, sizeof(buffer));
-        int bytes_received = recv(sockID,buffer,BUFFER_SIZE,0);
+        memset(buffer,0, sizeof(buffer)); 
+           
+        int bytes_received = recv(sockID,buffer,BUFFER_SIZE,0);  // 1 2 3 4 5 6 7 
         
-        if (bytes_received > 0 && strncmp(buffer, "ACK", 3) == 0){
+        if (bytes_received > 0){
         
             int ack_num;
             sscanf(buffer, "ACK%d", &ack_num);
