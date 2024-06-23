@@ -3,6 +3,7 @@
 #include<unistd.h>
 #include<arpa/inet.h>
 #include<string.h>
+#include<sys/socket.h>
 #define PORT 8089
 #define BUFFER_SIZE 1024
 
